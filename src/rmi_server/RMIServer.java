@@ -2,6 +2,8 @@ package rmi_server;
 
 import rmi_server.impl.AppointmentServiceImpl;
 import rmi_server.impl.DoctorScheduleServiceImpl;
+import rmi_server.impl.DoctorServiceImpl;
+import rmi_server.impl.PatientServiceImpl;
 
 import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
@@ -10,19 +12,20 @@ public class RMIServer {
 
     public static void main(String[] args) {
         try {
-            // Start RMI Registry on port 1099
-            LocateRegistry.createRegistry(2002);
-            System.out.println("RMI Registry started on port 2002.");
+            LocateRegistry.createRegistry(1099);
+            System.out.println("RMI registry started on 1099");
 
-            // Create service instances
             AppointmentService appointmentService = new AppointmentServiceImpl();
-            DoctorScheduleService doctorScheduleService = new DoctorScheduleServiceImpl();
+            DoctorScheduleService scheduleService = new DoctorScheduleServiceImpl();
+            DoctorService doctorService = new DoctorServiceImpl();
+            PatientService patientService = new PatientServiceImpl();
 
-            // Bind services
-            Naming.rebind("rmi://localhost:2002/AppointmentService", appointmentService);
-            Naming.rebind("rmi://localhost:2002/DoctorScheduleService", doctorScheduleService);
+            Naming.rebind("rmi://localhost:1099/AppointmentService", appointmentService);
+            Naming.rebind("rmi://localhost:1099/DoctorScheduleService", scheduleService);
+            Naming.rebind("rmi://localhost:1099/DoctorService", doctorService);
+            Naming.rebind("rmi://localhost:1099/PatientService", patientService);
 
-            System.out.println("RMI Services are running...");
+            System.out.println("RMI services bound: AppointmentService, DoctorScheduleService, DoctorService, PatientService");
         } catch (Exception e) {
             e.printStackTrace();
         }

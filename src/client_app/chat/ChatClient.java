@@ -6,42 +6,42 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ChatClient {
-
     private Socket socket;
-    private BufferedReader reader;
-    private PrintWriter writer;
+    private BufferedReader in;
+    private PrintWriter out;
+    private String username;
+    private String role;
 
-    public ChatClient(String host, int port, String username) {
-        try {
-            socket = new Socket(host, port);
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            writer = new PrintWriter(socket.getOutputStream(), true);
+    public ChatClient(String host, int port, String username, String role) throws Exception {
+        this.username = username;
+        this.role = role;
+        socket = new Socket(host, port);
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        out = new PrintWriter(socket.getOutputStream(), true);
 
-            // Send username first
-            writer.println(username);
-
-            // Start listening for incoming messages
-            new Thread(() -> receiveMessages()).start();
-
-            System.out.println("Connected to chat server.");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // send first line: username|role
+        out.println(username + "|" + role);
     }
 
-    private void receiveMessages() {
+    // send message to target user
+    public void sendMessage(String target, String message) {
+        out.println(target + "|" + message);
+    }
+
+    // blocking receive; usually run in separate thread
+    public void receiveLoop() {
         try {
-            String msg;
-            while ((msg = reader.readLine()) != null) {
-                System.out.println("MESSAGE: " + msg);
+            String line;
+            while ((line = in.readLine()) != null) {
+                // server sends: "FROM|sender|message" or "WELCOME|username" or "ERROR|..."
+                System.out.println("[CHAT] " + line);
             }
         } catch (Exception e) {
             System.out.println("Chat connection closed.");
         }
     }
 
-    public void sendMessage(String msg) {
-        writer.println(msg);
+    public void close() {
+        try { socket.close(); } catch (Exception ignored) {}
     }
 }

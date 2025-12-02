@@ -5,13 +5,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 public interface DoctorScheduleService extends Remote {
-
-    List<String> getAvailableSlots(String doctorId)
-            throws RemoteException;
-
-    boolean addAvailableSlot(String doctorId, String slot)
-            throws RemoteException;
-
-    boolean removeAvailableSlot(String doctorId, String slot)
-            throws RemoteException;
+    List<String> getAvailableSlots(String doctorId) throws RemoteException;
+    boolean addAvailableSlot(String doctorId, String slot) throws RemoteException;
+    boolean removeAvailableSlot(String doctorId, String slot) throws RemoteException;
 }

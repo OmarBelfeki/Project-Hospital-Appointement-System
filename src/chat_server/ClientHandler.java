@@ -4,59 +4,72 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
+
+// Protocol:
+// First message from client: "username|role"  e.g. "omar|patient" or "doc01|doctor"
+// Then normal messages are sent as: "target|message" where target is username of recipient
 
 public class ClientHandler extends Thread {
+    private final Socket socket;
+    private BufferedReader in;
+    private PrintWriter out;
+    private String username;
+    private String role;
 
-    private Socket socket;
-    private BufferedReader reader;
-    private PrintWriter writer;
-    private String username;  // doctor or patient id
+    // username -> ClientHandler (shared)
+    private static final Map<String, ClientHandler> connected = new ConcurrentHashMap<>();
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
     }
 
+    public void send(String msg) {
+        out.println(msg);
+    }
+
     @Override
     public void run() {
         try {
-            reader = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream()));
-            writer = new PrintWriter(socket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(socket.getOutputStream(), true);
 
-            // First message from client = username
-            this.username = reader.readLine();
-            System.out.println("User joined: " + username);
+            String first = in.readLine();
+            if (first == null) { socket.close(); return; }
+            String[] parts = first.split("\\|", 2);
+            username = parts[0];
+            role = parts.length > 1 ? parts[1] : "patient";
 
-            // Broadcast welcome
-            broadcast(username + " joined the chat.");
+            connected.put(username, this);
+            System.out.println("Connected: " + username + " (" + role + ")");
+            out.println("WELCOME|" + username);
 
-            // Message loop
-            String msg;
-            while ((msg = reader.readLine()) != null) {
+            String line;
+            while ((line = in.readLine()) != null) {
+                // expected: "target|message"
+                int idx = line.indexOf('|');
+                if (idx <= 0) continue;
+                String target = line.substring(0, idx);
+                String message = line.substring(idx + 1);
 
-                System.out.println(username + ": " + msg);
-                broadcast(username + ": " + msg);   // send to all
+                ClientHandler targetHandler = connected.get(target);
+                if (targetHandler != null) {
+                    targetHandler.send("FROM|" + username + "|" + message);
+                } else {
+                    out.println("ERROR|User not online: " + target);
+                }
             }
-
         } catch (Exception e) {
-            e.printStackTrace();
+            // ignore
         } finally {
-            disconnect();
+            try {
+                if (username != null) {
+                    connected.remove(username);
+                    System.out.println("Disconnected: " + username);
+                }
+                socket.close();
+            } catch (Exception ignored) {}
         }
-    }
-
-    // Send message to all connected users
-    private void broadcast(String message) {
-        for (ClientHandler handler : ChatServer.clients) {
-            handler.writer.println(message);
-        }
-    }
-
-    private void disconnect() {
-        try {
-            System.out.println(username + " disconnected.");
-            ChatServer.clients.remove(this);
-            socket.close();
-        } catch (Exception ignored) {}
     }
 }
