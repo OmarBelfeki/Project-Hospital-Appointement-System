@@ -1,6 +1,8 @@
 package common.dao;
 
 import common.models.Doctor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.List;
 
 public class DoctorDAO {
 
+    private static final Logger log = LoggerFactory.getLogger(DoctorDAO.class);
     private final Connection conn;
 
     public DoctorDAO(Connection conn) {
@@ -15,6 +18,7 @@ public class DoctorDAO {
     }
 
     public boolean insertDoctor(Doctor d) throws SQLException {
+        System.out.println(d);
         String sql = "INSERT INTO doctors (doctor_id, name, specialization, password_hash) VALUES (?, ?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, d.getId());
