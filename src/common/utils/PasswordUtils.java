@@ -18,7 +18,6 @@ public class PasswordUtils {
         }
     }
 
-    // Verify plaintext password against hashed hex
     public static boolean verify(String plain, String hashedHex) {
         if (plain == null || hashedHex == null) return false;
         return sha256Hex(plain).equals(hashedHex);

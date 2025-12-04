@@ -15,10 +15,11 @@ public class RMIClient {
 
     public RMIClient(String host) {
         try {
-            appointmentService = (AppointmentService) Naming.lookup("rmi://" + host + ":1099/AppointmentService");
-            scheduleService = (DoctorScheduleService) Naming.lookup("rmi://" + host + ":1099/DoctorScheduleService");
-            doctorService = (DoctorService) Naming.lookup("rmi://" + host + ":1099/DoctorService");
-            patientService = (PatientService) Naming.lookup("rmi://" + host + ":1099/PatientService");
+            String base = "rmi://" + host + ":1099/";
+            appointmentService = (AppointmentService) Naming.lookup(base + "AppointmentService");
+            scheduleService = (DoctorScheduleService) Naming.lookup(base + "DoctorScheduleService");
+            doctorService = (DoctorService) Naming.lookup(base + "DoctorService");
+            patientService = (PatientService) Naming.lookup(base + "PatientService");
             System.out.println("Connected to RMI services at " + host);
         } catch (Exception e) {
             e.printStackTrace();

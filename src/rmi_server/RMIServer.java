@@ -15,17 +15,17 @@ public class RMIServer {
             LocateRegistry.createRegistry(1099);
             System.out.println("RMI registry started on 1099");
 
-            AppointmentService appointmentService = new AppointmentServiceImpl();
-            DoctorScheduleService scheduleService = new DoctorScheduleServiceImpl();
-            DoctorService doctorService = new DoctorServiceImpl();
-            PatientService patientService = new PatientServiceImpl();
+            AppointmentServiceImpl appointmentService = new AppointmentServiceImpl();
+            DoctorScheduleServiceImpl scheduleService = new DoctorScheduleServiceImpl();
+            DoctorServiceImpl doctorService = new DoctorServiceImpl();
+            PatientServiceImpl patientService = new PatientServiceImpl();
 
-            Naming.rebind("rmi://localhost:1099/AppointmentService", appointmentService);
-            Naming.rebind("rmi://localhost:1099/DoctorScheduleService", scheduleService);
-            Naming.rebind("rmi://localhost:1099/DoctorService", doctorService);
-            Naming.rebind("rmi://localhost:1099/PatientService", patientService);
+            Naming.rebind("AppointmentService", appointmentService);
+            Naming.rebind("DoctorScheduleService", scheduleService);
+            Naming.rebind("DoctorService", doctorService);
+            Naming.rebind("PatientService", patientService);
 
-            System.out.println("RMI services bound: AppointmentService, DoctorScheduleService, DoctorService, PatientService");
+            System.out.println("RMI services bound.");
         } catch (Exception e) {
             e.printStackTrace();
         }

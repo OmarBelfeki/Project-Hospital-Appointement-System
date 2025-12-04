@@ -27,7 +27,7 @@ public class ClientMain {
             String role = null;
             String userId = null;
 
-            // ================= LOGIN / REGISTER MENU =================
+            // LOGIN / REGISTER MENU
             while (!loggedIn) {
                 System.out.println("\n=== Login Menu ===");
                 System.out.println("1. Register Doctor");
@@ -39,17 +39,17 @@ public class ClientMain {
                 String choice = sc.nextLine();
 
                 switch (choice) {
-
-                    // ---------------- DOCTOR ----------------
                     case "1": // Register Doctor
                         System.out.print("Doctor ID: ");
                         String did = sc.nextLine();
                         System.out.print("Doctor Name: ");
                         String name = sc.nextLine();
+                        System.out.print("Specialization: ");
+                        String spec = sc.nextLine();
                         System.out.print("Password: ");
                         String dpass = sc.nextLine();
 
-                        boolean added = rmi.doctorService.registerDoctor(did, name, dpass);
+                        boolean added = rmi.doctorService.registerDoctor(did, name, spec, dpass);
                         System.out.println(added ? "Doctor registered successfully." : "Doctor ID already exists.");
                         break;
 
@@ -70,7 +70,6 @@ public class ClientMain {
                         }
                         break;
 
-                    // ---------------- PATIENT ----------------
                     case "3": // Register Patient
                         System.out.print("Patient ID: ");
                         String pid = sc.nextLine();
@@ -79,7 +78,7 @@ public class ClientMain {
                         System.out.print("Password: ");
                         String ppass = sc.nextLine();
 
-                        boolean okReg = rmi.patientService.registerPatient(pid, ppass);
+                        boolean okReg = rmi.patientService.registerPatient(pid, pname, ppass);
                         System.out.println(okReg ? "Patient registered successfully!" : "Patient ID already exists.");
                         break;
 
@@ -113,7 +112,7 @@ public class ClientMain {
 
             if (finished) break;
 
-            // ================= MAIN SESSION MENU =================
+            // MAIN SESSION MENU
             boolean session = true;
             while (session) {
                 System.out.println("\n--- Menu (" + role + ": " + userId + ") ---");
@@ -151,7 +150,7 @@ public class ClientMain {
                             case "2":
                                 System.out.print("Enter doctorId: ");
                                 String did = sc.nextLine();
-                                System.out.print("Enter date (yyyy-mm-dd hh:mm): ");
+                                System.out.print("Enter date (YYYY-MM-DD HH:MM:SS): ");
                                 String date = sc.nextLine();
                                 String aptId = rmi.appointmentService.bookAppointment(userId, did, date);
                                 System.out.println("Booked: " + aptId);
@@ -216,7 +215,7 @@ public class ClientMain {
                                 break;
 
                             case "2":
-                                System.out.print("Enter slot (yyyy-mm-dd hh:mm): ");
+                                System.out.print("Enter slot (YYYY-MM-DD HH:MM:SS): ");
                                 String slot = sc.nextLine();
                                 rmi.scheduleService.addAvailableSlot(userId, slot);
                                 System.out.println("Slot added.");

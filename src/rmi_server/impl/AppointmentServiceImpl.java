@@ -1,62 +1,63 @@
 package rmi_server.impl;
 
 import rmi_server.AppointmentService;
-import common.models.Appointment;
+import common.dao.AppointmentDAO;
+import common.database.Database;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
+import java.sql.Connection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class AppointmentServiceImpl extends UnicastRemoteObject implements AppointmentService {
 
-    private final AtomicInteger counter = new AtomicInteger(1);
+    private final AppointmentDAO appointmentDAO;
 
     public AppointmentServiceImpl() throws RemoteException {
         super();
+        try {
+            Connection conn = Database.getConnection();
+            appointmentDAO = new AppointmentDAO(conn);
+        } catch (Exception e) {
+            throw new RemoteException("DB connection failed: " + e.getMessage(), e);
+        }
     }
 
     @Override
-    public synchronized String bookAppointment(String patientId, String doctorId, String date) throws RemoteException {
-        if (patientId == null || doctorId == null || date == null) throw new RemoteException("Invalid args");
-        if (!DataStore.doctors.containsKey(doctorId)) throw new RemoteException("Doctor not found: " + doctorId);
-
-        String id = "APT-" + counter.getAndIncrement();
-        Appointment apt = new Appointment(id, patientId, doctorId, date);
-        DataStore.appointments.put(id, apt);
-
-        System.out.println("Booked appointment: " + apt);
-        return id;
+    public String bookAppointment(String patientId, String doctorId, String date) throws RemoteException {
+        String id = "APT-" + System.currentTimeMillis();
+        try {
+            boolean ok = appointmentDAO.insertAppointment(id, patientId, doctorId, date);
+            return ok ? id : null;
+        } catch (Exception e) {
+            throw new RemoteException(e.getMessage(), e);
+        }
     }
 
     @Override
-    public synchronized boolean cancelAppointment(String appointmentId) throws RemoteException {
-        Appointment removed = DataStore.appointments.remove(appointmentId);
-        if (removed != null) {
-            System.out.println("Cancelled appointment: " + removed);
-            return true;
-        } else {
-            System.out.println("Cancel failed, not found: " + appointmentId);
-            return false;
+    public boolean cancelAppointment(String appointmentId) throws RemoteException {
+        try {
+            return appointmentDAO.deleteAppointment(appointmentId);
+        } catch (Exception e) {
+            throw new RemoteException(e.getMessage(), e);
         }
     }
 
     @Override
     public List<String> getPatientAppointments(String patientId) throws RemoteException {
-        List<String> out = new ArrayList<>();
-        for (Appointment a : DataStore.appointments.values()) {
-            if (a.getPatientId().equals(patientId)) out.add(a.toString());
+        try {
+            return appointmentDAO.getAppointmentsForPatient(patientId);
+        } catch (Exception e) {
+            throw new RemoteException(e.getMessage(), e);
         }
-        return out;
     }
 
     @Override
     public List<String> getAppointmentsForDoctor(String doctorId) throws RemoteException {
-        List<String> out = new ArrayList<>();
-        for (Appointment a : DataStore.appointments.values()) {
-            if (a.getDoctorId().equals(doctorId)) out.add(a.toString());
+        try {
+            return appointmentDAO.getAppointmentsForDoctor(doctorId);
+        } catch (Exception e) {
+            throw new RemoteException(e.getMessage(), e);
         }
-        return out;
     }
 }

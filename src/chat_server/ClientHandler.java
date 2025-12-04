@@ -8,9 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
 // Protocol:
-// First message from client: "username|role"  e.g. "omar|patient" or "doc01|doctor"
-// Then normal messages are sent as: "target|message" where target is username of recipient
-
+// First message: "username|role" (e.g. "omar|patient" or "doc01|doctor")
+// Then messages: "target|message"
 public class ClientHandler extends Thread {
     private final Socket socket;
     private BufferedReader in;
@@ -18,7 +17,7 @@ public class ClientHandler extends Thread {
     private String username;
     private String role;
 
-    // username -> ClientHandler (shared)
+    // Shared map of connected users (username -> handler)
     private static final Map<String, ClientHandler> connected = new ConcurrentHashMap<>();
 
     public ClientHandler(Socket socket) {
@@ -47,7 +46,6 @@ public class ClientHandler extends Thread {
 
             String line;
             while ((line = in.readLine()) != null) {
-                // expected: "target|message"
                 int idx = line.indexOf('|');
                 if (idx <= 0) continue;
                 String target = line.substring(0, idx);
@@ -61,7 +59,7 @@ public class ClientHandler extends Thread {
                 }
             }
         } catch (Exception e) {
-            // ignore
+            // e.printStackTrace();
         } finally {
             try {
                 if (username != null) {
