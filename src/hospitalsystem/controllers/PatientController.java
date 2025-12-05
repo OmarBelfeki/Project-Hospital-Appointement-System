@@ -3,6 +3,7 @@ package hospitalsystem.controllers;
 import common.dao.PatientDAO;
 import common.database.Database;
 import common.models.Patient;
+import hospitalsystem.controllers.dto.PatientRequest;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -23,10 +24,21 @@ public class PatientController {
     }
 
     @POST
-    public Response registerPatient(Patient patient) throws SQLException {
+    public Response registerPatient(PatientRequest dto) throws SQLException {
+        // Map DTO to model
+        Patient patient = new Patient(
+                dto.id,
+                dto.name,
+                dto.passwordHash
+        );
+
         boolean added = dao.insertPatient(patient);
-        if (added) return Response.ok(patient).build();
-        return Response.status(Response.Status.CONFLICT).entity("Patient ID already exists").build();
+        if (added) {
+            return Response.ok(patient).build();
+        }
+        return Response.status(Response.Status.CONFLICT)
+                .entity("Patient ID already exists")
+                .build();
     }
 
     @GET

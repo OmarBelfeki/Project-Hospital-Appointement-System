@@ -2,8 +2,6 @@ package common.models;
 
 import java.io.Serializable;
 
-import static common.utils.PasswordUtils.sha256Hex;
-
 public class Doctor implements Serializable {
 
     private String id;
@@ -23,7 +21,7 @@ public class Doctor implements Serializable {
     public String getId() { return id; }
     public String getName() { return name; }
     public String getSpecialization() { return specialization; }
-    public String getPasswordHash() { return sha256Hex(passwordHash); }
+    public String getPasswordHash() { return passwordHash; }
 
     @Override
     public String toString() {

@@ -3,6 +3,7 @@ package hospitalsystem.controllers;
 import common.dao.AppointmentDAO;
 import common.database.Database;
 import common.models.Appointment;
+import hospitalsystem.controllers.dto.AppointmentRequest;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -24,10 +25,27 @@ public class AppointmentController {
     }
 
     @POST
-    public Response bookAppointment(Appointment apt) throws SQLException {
-        boolean added = dao.insertAppointment(apt.getId(), apt.getPatientId(), apt.getDoctorId(), apt.getDate());
+    public Response bookAppointment(AppointmentRequest dto) throws SQLException {
+
+        Appointment apt = new Appointment(
+                dto.id,
+                dto.patientId,
+                dto.doctorId,
+                dto.date
+        );
+
+        boolean added = dao.insertAppointment(
+                apt.getId(),
+                apt.getPatientId(),
+                apt.getDoctorId(),
+                apt.getDate()
+        );
+
         if (added) return Response.ok(apt).build();
-        return Response.status(Response.Status.CONFLICT).entity("Appointment could not be created").build();
+
+        return Response.status(Response.Status.CONFLICT)
+                .entity("Appointment could not be created")
+                .build();
     }
 
     @GET
@@ -47,6 +65,9 @@ public class AppointmentController {
     public Response cancelAppointment(@PathParam("id") String id) throws SQLException {
         boolean deleted = dao.deleteAppointment(id);
         if (deleted) return Response.ok().build();
-        return Response.status(Response.Status.NOT_FOUND).entity("Appointment not found").build();
+
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("Appointment not found")
+                .build();
     }
 }

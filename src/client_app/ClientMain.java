@@ -267,7 +267,7 @@ public class ClientMain {
             }
         }
 
-        System.out.println("Goodbye.");
+        System.out.println("Goodbye. By Omar & Aziz");
         sc.close();
     }
 }

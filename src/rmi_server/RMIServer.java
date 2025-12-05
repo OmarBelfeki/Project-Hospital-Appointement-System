@@ -10,6 +10,8 @@ import java.rmi.registry.LocateRegistry;
 
 public class RMIServer {
 
+    // sudo systemctl start mysql
+
     public static void main(String[] args) {
         try {
             LocateRegistry.createRegistry(1099);
