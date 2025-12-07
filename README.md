@@ -246,3 +246,9 @@ java client_app/chat/ChatClient
 Projet réalisé par **Omar Belfeki && Mouhamed Aziz Mazghouni** (LSI3 1.1).  
 FSS Project (Belfeki License): Do Not Touch.
 ---
+
+Expliquer avec un video 
+
+
+https://github.com/user-attachments/assets/ce2e14bf-a8f4-416c-b1c1-ef4ac267da98
+
