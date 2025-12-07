@@ -2,6 +2,7 @@ package client_app;
 
 import client_app.rmi.RMIClient;
 import client_app.chat.ChatClient;
+import common.models.Appointment;
 import common.models.Doctor;
 
 import java.util.List;
@@ -157,7 +158,7 @@ public class ClientMain {
                                 break;
 
                             case "3":
-                                List<String> appts = rmi.appointmentService.getPatientAppointments(userId);
+                                List<Appointment> appts = rmi.appointmentService.getPatientAppointments(userId);
                                 if (appts.isEmpty()) System.out.println("No appointments.");
                                 else {
                                     System.out.println("Appointments:");
@@ -206,7 +207,7 @@ public class ClientMain {
                     } else { // doctor
                         switch (opt) {
                             case "1":
-                                List<String> doctorAppointments = rmi.appointmentService.getAppointmentsForDoctor(userId);
+                                List<Appointment> doctorAppointments = rmi.appointmentService.getAppointmentsForDoctor(userId);
                                 if (doctorAppointments.isEmpty()) System.out.println("No appointments.");
                                 else {
                                     System.out.println("Your Appointments:");

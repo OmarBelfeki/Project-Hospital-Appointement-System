@@ -1,5 +1,6 @@
 package rmi_server.impl;
 
+import common.models.Appointment;
 import rmi_server.AppointmentService;
 import common.dao.AppointmentDAO;
 import common.database.Database;
@@ -44,7 +45,7 @@ public class AppointmentServiceImpl extends UnicastRemoteObject implements Appoi
     }
 
     @Override
-    public List<String> getPatientAppointments(String patientId) throws RemoteException {
+    public List<Appointment> getPatientAppointments(String patientId) throws RemoteException {
         try {
             return appointmentDAO.getAppointmentsForPatient(patientId);
         } catch (Exception e) {
@@ -53,7 +54,7 @@ public class AppointmentServiceImpl extends UnicastRemoteObject implements Appoi
     }
 
     @Override
-    public List<String> getAppointmentsForDoctor(String doctorId) throws RemoteException {
+    public List<Appointment> getAppointmentsForDoctor(String doctorId) throws RemoteException {
         try {
             return appointmentDAO.getAppointmentsForDoctor(doctorId);
         } catch (Exception e) {

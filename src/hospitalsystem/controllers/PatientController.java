@@ -2,6 +2,7 @@ package hospitalsystem.controllers;
 
 import common.dao.PatientDAO;
 import common.database.Database;
+import common.models.Doctor;
 import common.models.Patient;
 import hospitalsystem.controllers.dto.PatientRequest;
 
@@ -10,6 +11,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 @Path("/patients")
 @Produces(MediaType.APPLICATION_JSON)
@@ -21,6 +23,11 @@ public class PatientController {
     public PatientController() {
         Connection conn = Database.getConnection();
         dao = new PatientDAO(conn);
+    }
+
+    @GET
+    public List<Patient> getAllPatients() throws SQLException {
+        return dao.getAllPatients();
     }
 
     @POST

@@ -3,6 +3,8 @@ package common.dao;
 import common.models.Patient;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PatientDAO {
 
@@ -35,4 +37,19 @@ public class PatientDAO {
         }
         return null;
     }
+
+    public List<Patient> getAllPatients() throws SQLException {
+        List<Patient> list = new ArrayList<>();
+        Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery("SELECT patient_id, name, password_hash FROM patients");
+        while (rs.next()) {
+            list.add(new Patient(
+                    rs.getString("patient_id"),
+                    rs.getString("name"),
+                    rs.getString("password_hash")
+            ));
+        }
+        return list;
+    }
+
 }

@@ -1,5 +1,7 @@
 package common.dao;
 
+import common.models.Appointment;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,34 +31,40 @@ public class AppointmentDAO {
         return ps.executeUpdate() == 1;
     }
 
-    public List<String> getAppointmentsForPatient(String patientId) throws SQLException {
-        String sql = "SELECT appointment_id, doctor_id, date FROM appointments WHERE patient_id=?";
+    public List<Appointment> getAppointmentsForPatient(String patientId) throws SQLException {
+        String sql = "SELECT appointment_id, doctor_id, patient_id, date FROM appointments WHERE patient_id=?";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, patientId);
         ResultSet rs = ps.executeQuery();
 
-        List<String> list = new ArrayList<>();
+        List<Appointment> list = new ArrayList<>();
         while (rs.next()) {
-            String text = "Appointment: " + rs.getString("appointment_id")
-                    + " | Doctor: " + rs.getString("doctor_id")
-                    + " | Date: " + rs.getString("date");
-            list.add(text);
+            String id = rs.getString("appointment_id");
+            String doctorId = rs.getString("doctor_id");
+            String patientIdd = rs.getString("patient_id");
+            String date = rs.getString("date");
+
+            Appointment appointment = new Appointment(id, patientIdd, doctorId, date);
+            list.add(appointment);
         }
         return list;
     }
 
-    public List<String> getAppointmentsForDoctor(String doctorId) throws SQLException {
-        String sql = "SELECT appointment_id, patient_id, date FROM appointments WHERE doctor_id=?";
+    public List<Appointment> getAppointmentsForDoctor(String doctorId) throws SQLException {
+        String sql = "SELECT appointment_id, patient_id, doctor_id, date FROM appointments WHERE doctor_id=?";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, doctorId);
         ResultSet rs = ps.executeQuery();
 
-        List<String> list = new ArrayList<>();
+        List<Appointment> list = new ArrayList<>();
         while (rs.next()) {
-            String text = "Appointment: " + rs.getString("appointment_id")
-                    + " | Patient: " + rs.getString("patient_id")
-                    + " | Date: " + rs.getString("date");
-            list.add(text);
+            String id = rs.getString("appointment_id");
+            String patientId = rs.getString("patient_id");
+            String doctorIdd = rs.getString("doctor_id");
+            String date = rs.getString("date");
+
+            Appointment appointment = new Appointment(id, patientId, doctorIdd, date);
+            list.add(appointment);
         }
         return list;
     }

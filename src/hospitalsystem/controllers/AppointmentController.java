@@ -50,13 +50,13 @@ public class AppointmentController {
 
     @GET
     @Path("/patient/{patientId}")
-    public List<String> getPatientAppointments(@PathParam("patientId") String patientId) throws SQLException {
+    public List<Appointment> getPatientAppointments(@PathParam("patientId") String patientId) throws SQLException {
         return dao.getAppointmentsForPatient(patientId);
     }
 
     @GET
     @Path("/doctor/{doctorId}")
-    public List<String> getDoctorAppointments(@PathParam("doctorId") String doctorId) throws SQLException {
+    public List<Appointment> getDoctorAppointments(@PathParam("doctorId") String doctorId) throws SQLException {
         return dao.getAppointmentsForDoctor(doctorId);
     }
 
